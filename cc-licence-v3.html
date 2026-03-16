@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creative Commons Licence Chooser</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&family=Instrument+Sans:wght@400;500;600&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0e0e0f;
+  --surface:  #161618;
+  --surface2: #1e1e21;
+  --border:   #2a2a2e;
+  --border2:  #3a3a40;
+  --text:     #e8e6e0;
+  --muted:    #7a7870;
+  --faint:    #3a3830;
+
+  --cc-gold:  #f5c842;
+  --cc-green: #4caf7d;
+  --cc-red:   #e05c4b;
+  --cc-blue:  #5b9cf6;
+  --cc-purple:#a78bfa;
+  --cc-orange:#f5894a;
+  --cc-pink:  #e06fa0;
+  --cc-brick: #c0504a;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ─────────────────────────────────────────── */
+header {
+  padding: 64px 56px 56px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 80% -10%, rgba(245,200,66,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 300px at 10% 120%, rgba(76,175,125,.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hdr-eyebrow {
+  font-family: 'Fira Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--cc-gold);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hdr-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: var(--cc-gold);
+}
+h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: clamp(36px, 6vw, 68px);
+  line-height: 1.02;
+  letter-spacing: -.02em;
+  color: var(--text);
+  max-width: 700px;
+  margin-bottom: 20px;
+}
+h1 em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--cc-gold);
+}
+.hdr-sub {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--muted);
+  max-width: 480px;
+}
+
+/* ── LAYOUT ─────────────────────────────────────────── */
+.shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: calc(100vh - 220px);
+}
+
+/* ── SIDEBAR NAV ────────────────────────────────────── */
+nav {
+  border-right: 1px solid var(--border);
+  padding: 40px 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.nav-label {
+  font-family: 'Fira Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 28px;
+  margin-bottom: 12px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 28px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all .18s;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--muted);
+  background: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: none;
+  width: 100%;
+  text-align: left;
+  font-family: 'Instrument Sans', sans-serif;
+}
+.nav-item:hover { color: var(--text); background: var(--surface); }
+.nav-item.active { color: var(--text); border-left-color: var(--cc-gold); background: var(--surface); }
+.nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border2);
+  flex-shrink: 0;
+  transition: background .18s;
+}
+.nav-item.active .nav-dot { background: var(--cc-gold); }
+
+.nav-divider { height: 1px; background: var(--border); margin: 20px 0; }
+.nav-sub-label {
+  font-family: 'Fira Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--faint);
+  padding: 0 28px;
+  margin-bottom: 8px;
+}
+.nav-lic-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 28px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: 'Fira Mono', monospace;
+  transition: color .15s;
+}
+.nav-lic-item:hover { color: var(--text); }
+
+/* ── MAIN CONTENT ───────────────────────────────────── */
+main {
+  padding: 48px 56px 80px;
+  overflow: hidden;
+}
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ── SECTION HEAD ───────────────────────────────────── */
+.section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.section-num {
+  font-family: 'Fira Mono', monospace;
+  font-size: 11px;
+  color: var(--cc-gold);
+  letter-spacing: .15em;
+}
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+.section-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 560px;
+  margin-bottom: 36px;
+  margin-top: -20px;
+}
+
+/* ── FLOWCHART ───────────────────────────────────────── */
+.flow-step {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .32s ease, transform .32s ease;
+  pointer-events: none;
+  margin-bottom: 0;
+}
+.flow-step.show { opacity: 1; transform: none; pointer-events: auto; }
+
+.q-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 36px;
+  position: relative;
+  max-width: 680px;
+}
+.q-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 24px; right: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+}
+.q-step-tag {
+  font-family: 'Fira Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--cc-gold);
+  margin-bottom: 10px;
+}
+.q-question {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(18px, 2.5vw, 23px);
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 10px;
+  letter-spacing: -.01em;
+}
+.q-hint {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--text);
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .17s;
+}
+.choice:hover { border-color: var(--cc-gold); color: var(--cc-gold); background: rgba(245,200,66,.05); }
+.choice.green { border-color: rgba(76,175,125,.3); color: var(--cc-green); }
+.choice.green:hover { border-color: var(--cc-green); background: rgba(76,175,125,.07); }
+.choice.red { border-color: rgba(224,92,75,.3); color: var(--cc-red); }
+.choice.red:hover { border-color: var(--cc-red); background: rgba(224,92,75,.06); }
+.choice.ghost { border-color: var(--border); color: var(--muted); }
+.choice.ghost:hover { border-color: var(--cc-purple); color: var(--cc-purple); }
+
+/* flow arrow */
+.flow-arrow {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 36px;
+  gap: 0;
+  height: 52px;
+  justify-content: center;
+  position: relative;
+}
+.flow-arrow.show { display: flex; }
+.flow-arrow-line {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(180deg, var(--border2), var(--cc-gold));
+}
+.flow-arrow-head {
+  width: 0; height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid var(--cc-gold);
+  margin-left: -4px;
+}
+.flow-arrow-label {
+  position: absolute;
+  left: 52px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Fira Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── RESULT CARD ─────────────────────────────────────── */
+.result-wrap {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .38s ease, transform .38s ease;
+  max-width: 680px;
+}
+.result-wrap.show { opacity: 1; transform: none; }
+
+.result-card {
+  border-radius: 16px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border2);
+  position: relative;
+}
+.result-card-top {
+  padding: 32px 36px 28px;
+  position: relative;
+}
+.result-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+/* the CC icon buttons themselves */
+.cc-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.cc-icon svg {
+  width: 44px;
+  height: 44px;
+}
+
+.result-code {
+  font-family: 'Fira Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.result-name {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  margin-bottom: 12px;
+  line-height: 1.15;
+}
+.result-desc {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.result-card-bottom {
+  padding: 20px 36px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-family: 'Fira Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: .07em;
+  border: 1px solid;
+}
+.pill.allow { border-color: rgba(76,175,125,.35); color: var(--cc-green); background: rgba(76,175,125,.08); }
+.pill.deny  { border-color: rgba(224,92,75,.35);  color: var(--cc-red);   background: rgba(224,92,75,.07); }
+.pill.note  { border-color: rgba(245,200,66,.3);  color: var(--cc-gold);  background: rgba(245,200,66,.06); }
+
+.restart-btn {
+  margin-top: 20px;
+  background: none;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-family: 'Fira Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .18s;
+}
+.restart-btn:hover { color: var(--text); border-color: var(--border2); background: var(--surface2); }
+
+/* ── ELEMENTS PANEL ─────────────────────────────────── */
+.elem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+.elem-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color .2s;
+}
+.elem-card:hover { border-color: var(--border2); }
+.elem-icon-row { display: flex; align-items: center; gap: 12px; }
+.elem-icon-row svg { width: 48px; height: 48px; }
+.elem-abbr {
+  font-family: 'Fraunces', serif;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  line-height: 1;
+}
+.elem-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.elem-text  { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+.spectrum-bar-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+.spec-label {
+  font-family: 'Fira Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+.spec-track {
+  height: 10px;
+  border-radius: 100px;
+  background: linear-gradient(90deg, #a78bfa, #5b9cf6, #4caf7d, #f5c842, #f5894a, #e06fa0, #c0504a);
+  margin-bottom: 16px;
+  position: relative;
+}
+.spec-ends {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Fira Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+}
+.spec-lic-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.spec-lic-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px 5px 8px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  font-family: 'Fira Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .06em;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .18s;
+}
+.spec-lic-chip:hover { border-color: var(--border2); color: var(--text); }
+.spec-lic-chip .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── ALL LICENCES ───────────────────────────────────── */
+.all-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.lic-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lic-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+}
+.lic-badge-row { display: flex; align-items: center; gap: 5px; }
+.lic-badge-row svg { width: 36px; height: 36px; }
+.lic-code {
+  font-family: 'Fira Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .12em;
+}
+.lic-name {
+  font-family: 'Fraunces', serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  line-height: 1.25;
+}
+.lic-desc { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+.lic-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.lic-link {
+  font-family: 'Fira Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-decoration: none;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1px;
+  transition: color .15s, border-color .15s;
+  width: fit-content;
+  margin-top: auto;
+}
+.lic-link:hover { color: var(--text); border-color: var(--border2); }
+
+/* ── COMPAT TABLE ───────────────────────────────────── */
+.tbl-wrap { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th, td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+th {
+  font-family: 'Fira Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--surface);
+  font-weight: 400;
+}
+td:first-child { text-align: left; }
+.tbl-lic-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tbl-lic-cell svg { width: 24px; height: 24px; }
+.tbl-lic-code {
+  font-family: 'Fira Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .06em;
+  white-space: nowrap;
+}
+tr:hover td { background: var(--surface); }
+.ck { color: var(--cc-green); font-size: 15px; }
+.cx { color: var(--cc-red);   font-size: 15px; }
+.cm { color: var(--muted);    font-size: 11px; font-family: 'Fira Mono', monospace; }
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 56px;
+  font-family: 'Fira Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: .07em;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: gap;
+  gap: 12px;
+}
+footer a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--border); padding-bottom: 1px; }
+footer a:hover { color: var(--text); }
+
+@media (max-width: 760px) {
+  .shell { grid-template-columns: 1fr; }
+  nav { position: static; height: auto; display: flex; flex-wrap: wrap; padding: 16px; gap: 4px; border-right: none; border-bottom: 1px solid var(--border); }
+  .nav-label, .nav-divider, .nav-sub-label, .nav-lic-item { display: none; }
+  .nav-item { width: auto; padding: 8px 16px; }
+  header { padding: 36px 24px 28px; }
+  main { padding: 32px 24px 60px; }
+  footer { padding: 20px 24px; flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-eyebrow">Creative Commons · Licence Reference</div>
+  <h1>Choose your <em>licence.</em></h1>
+  <p class="hdr-sub">An interactive guide to all six Creative Commons licences. Answer three questions to find the right one for your work.</p>
+</header>
+
+<div class="shell">
+
+<!-- ── SIDEBAR ── -->
+<nav>
+  <div class="nav-label">Sections</div>
+  <button class="nav-item active" onclick="show('chooser',this)"><span class="nav-dot"></span>Licence Chooser</button>
+  <button class="nav-item" onclick="show('elements',this)"><span class="nav-dot"></span>Licence Elements</button>
+  <button class="nav-item" onclick="show('overview',this)"><span class="nav-dot"></span>All Licences</button>
+  <button class="nav-item" onclick="show('compat',this)"><span class="nav-dot"></span>Compatibility</button>
+  <div class="nav-divider"></div>
+  <div class="nav-sub-label">Quick ref</div>
+  <button class="nav-lic-item" onclick="show('overview',document.querySelectorAll(\'.nav-item\')[2])">
+    <span style="font-size:14px">🌐</span> CC0
+  </button>
+  <button class="nav-lic-item" onclick="show('overview',document.querySelectorAll('.nav-item')[2])">
+    <span style="font-size:14px">📖</span> CC BY
+  </button>
+  <button class="nav-lic-item" onclick="show('overview',document.querySelectorAll('.nav-item')[2])">
+    <span style="font-size:14px">🔄</span> CC BY-SA
+  </button>
+  <button class="nav-lic-item" onclick="show('overview',document.querySelectorAll('.nav-item')[2])">
+    <span style="font-size:14px">💼</span> CC BY-NC
+  </button>
+  <button class="nav-lic-item" onclick="show('overview',document.querySelectorAll('.nav-item')[2])">
+    <span style="font-size:14px">🔒</span> CC BY-ND
+  </button>
+</nav>
+
+<!-- ── MAIN ── -->
+<main>
+
+<!-- ════════════ CHOOSER PANEL ════════════ -->
+<div id="panel-chooser" class="panel active">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <span class="section-title">Licence Chooser</span>
+  </div>
+  <p class="section-desc">Answer three questions to identify the right Creative Commons licence. All CC licences require attribution (BY) — the questions below determine what additional conditions apply.</p>
+
+  <div id="step0" class="flow-step show">
+    <div class="q-card">
+      <div class="q-step-tag">Question 01 / 03</div>
+      <div class="q-question">Do you want to allow commercial use of your work?</div>
+      <div class="q-hint">Commercial use means others can profit from using, sharing, or building on your work. If you restrict this, the NonCommercial (NC) condition applies.</div>
+      <div class="btn-row">
+        <button class="choice green" onclick="ans(0,'yes')">✓ &ensp;Yes — allow commercial use</button>
+        <button class="choice red"   onclick="ans(0,'no')">✕ &ensp;No — non-commercial only</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="arr0" class="flow-arrow"><div class="flow-arrow-line"></div><div class="flow-arrow-head"></div></div>
+
+  <div id="step1" class="flow-step">
+    <div class="q-card">
+      <div class="q-step-tag">Question 02 / 03</div>
+      <div class="q-question">Do you want to allow others to adapt or build upon your work?</div>
+      <div class="q-hint">Derivatives include remixes, translations, and adaptations. The NoDerivatives (ND) condition prevents others from sharing modified versions — though personal-use adaptations are still permitted.</div>
+      <div class="btn-row">
+        <button class="choice green" onclick="ans(1,'yes')">✓ &ensp;Yes — allow adaptations</button>
+        <button class="choice red"   onclick="ans(1,'no')">✕ &ensp;No — original form only (ND)</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="arr1" class="flow-arrow"><div class="flow-arrow-line"></div><div class="flow-arrow-head"></div></div>
+
+  <div id="step2" class="flow-step">
+    <div class="q-card">
+      <div class="q-step-tag">Question 03 / 03</div>
+      <div class="q-question">Must adaptations carry the same licence (ShareAlike)?</div>
+      <div class="q-hint">ShareAlike (SA) is the copyleft condition — anyone who adapts and shares your work must release it under the same or a compatible licence. ND and SA cannot be combined.</div>
+      <div class="btn-row">
+        <button class="choice green" onclick="ans(2,'yes')">✓ &ensp;Yes — require same licence (SA)</button>
+        <button class="choice red"   onclick="ans(2,'no')">✕ &ensp;No — any licence is fine</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="arr2" class="flow-arrow"><div class="flow-arrow-line"></div><div class="flow-arrow-head"></div></div>
+
+  <div id="result" class="result-wrap"></div>
+
+  <div id="also-options" style="display:none; margin-top:40px; padding-top:32px; border-top:1px solid var(--border);">
+    <div style="font-family:'Fira Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;">Other options</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="choice ghost" onclick="showResult('cc0')">◎ &ensp;CC0 — waive all rights</button>
+      <button class="choice ghost" onclick="showResult('all-rights')">© &ensp;All Rights Reserved</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ ELEMENTS PANEL ════════════ -->
+<div id="panel-elements" class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <span class="section-title">Licence Elements</span>
+  </div>
+  <p class="section-desc">Every Creative Commons licence is built from combinations of four elements. Attribution (BY) is always required. The other three elements can be added as restrictions.</p>
+
+  <div class="elem-grid" id="elem-grid"></div>
+
+  <div class="spectrum-bar-wrap">
+    <div class="spec-label">Openness spectrum — most permissive → most restrictive</div>
+    <div class="spec-track"></div>
+    <div class="spec-ends"><span>CC0 · Public Domain</span><span>CC BY-NC-ND · Most restricted</span></div>
+    <div class="spec-lic-row" id="spec-chips"></div>
+  </div>
+
+  <p style="font-size:13px;color:var(--muted);line-height:1.75;max-width:560px;">
+    ND and SA are <strong style="color:var(--text)">mutually exclusive</strong> — NoDerivatives prohibits sharing any adaptation, which is incompatible with the ShareAlike requirement. This reduces 16 theoretical combinations to six valid licences.
+  </p>
+</div>
+
+<!-- ════════════ ALL LICENCES PANEL ════════════ -->
+<div id="panel-overview" class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <span class="section-title">All Licences</span>
+  </div>
+  <p class="section-desc">The six standard Creative Commons licences, plus CC0 (public domain dedication). Listed from most to least permissive.</p>
+  <div class="all-grid" id="all-grid"></div>
+</div>
+
+<!-- ════════════ COMPAT PANEL ════════════ -->
+<div id="panel-compat" class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <span class="section-title">Compatibility</span>
+  </div>
+  <p class="section-desc">A quick-reference matrix of what each licence permits. All CC licences require attribution to the original creator.</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left">Licence</th>
+          <th>Share freely</th>
+          <th>Commercial use</th>
+          <th>Adapt / remix</th>
+          <th>Share adaptations</th>
+          <th>Same licence</th>
+        </tr>
+      </thead>
+      <tbody id="compat-body"></tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--muted);margin-top:20px;font-family:'Fira Mono',monospace;line-height:1.8;">
+    ✓ = permitted &nbsp;·&nbsp; ✗ = not permitted &nbsp;·&nbsp; personal = allowed privately, not for distribution
+  </p>
+</div>
+
+</main>
+</div><!-- /shell -->
+
+<footer>
+  <span>Based on <a href="https://creativecommons.org/share-your-work/cclicenses/" target="_blank">creativecommons.org</a> · CC Licences v4.0</span>
+  <span>Icons follow the official Creative Commons icon system</span>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  OFFICIAL CC ICON SVG PATHS
+//  Carefully reconstructed from the CC icon set.
+//  Each icon is a 40×40 circle with white paths inside.
+// ══════════════════════════════════════════════════════════
+
+function mkSvg(paths, bg='#000', size=40) {
+  const r = size / 2;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}">
+    <circle cx="${r}" cy="${r}" r="${r}" fill="${bg}"/>
+    ${paths}
+  </svg>`;
+}
+
+// CC logo — two arced C shapes
+function svgCC(bg='#000', s=40) {
+  const c = s/2, sc = s/40;
+  // Left C
+  const lx = c - 4*sc, ly = c;
+  // Right C
+  return mkSvg(`
+    <text x="${c}" y="${c+6*sc}" text-anchor="middle"
+      font-family="Georgia,'Times New Roman',serif"
+      font-weight="bold" font-size="${17*sc}" fill="#fff" letter-spacing="${-1.5*sc}">cc</text>
+  `, bg, s);
+}
+
+// BY — person silhouette (head + shoulders arc)
+function svgBY(bg='#000', s=40) {
+  const c = s/2, sc = s/40;
+  return mkSvg(`
+    <circle cx="${c}" cy="${c - 7*sc}" r="${5*sc}" fill="#fff"/>
+    <path d="M${c-10*sc} ${c+14*sc}
+             Q${c-10*sc} ${c+2*sc} ${c} ${c+2*sc}
+             Q${c+10*sc} ${c+2*sc} ${c+10*sc} ${c+14*sc}Z"
+          fill="#fff"/>
+  `, bg, s);
+}
+
+// NC — dollar sign with diagonal bar through it
+function svgNC(bg='#000', s=40) {
+  const c = s/2, sc = s/40;
+  return mkSvg(`
+    <text x="${c}" y="${c+7.5*sc}" text-anchor="middle"
+      font-family="Arial,Helvetica,sans-serif"
+      font-weight="bold" font-size="${20*sc}" fill="#fff">$</text>
+    <line x1="${c-9*sc}" y1="${c-11*sc}" x2="${c+9*sc}" y2="${c+11*sc}"
+      stroke="${bg}" stroke-width="${4.5*sc}" stroke-linecap="round"/>
+    <line x1="${c-9*sc}" y1="${c-11*sc}" x2="${c+9*sc}" y2="${c+11*sc}"
+      stroke="#fff" stroke-width="${2.5*sc}" stroke-linecap="round"/>
+  `, bg, s);
+}
+
+// SA — two circular arrows forming a rotation symbol
+function svgSA(bg='#000', s=40) {
+  const c = s/2, sc = s/40, r = 9*sc;
+  return mkSvg(`
+    <!-- top arc: left to right, arrow at right -->
+    <path d="M${c-r} ${c} A${r} ${r} 0 0 1 ${c+r} ${c}"
+      fill="none" stroke="#fff" stroke-width="${2.8*sc}" stroke-linecap="round"/>
+    <!-- arrowhead pointing right-down at end of top arc -->
+    <polygon points="${c+r-1*sc},${c-5*sc} ${c+r+5*sc},${c+1*sc} ${c+r-5*sc},${c+1*sc}"
+      fill="#fff"/>
+    <!-- bottom arc: right to left, arrow at left -->
+    <path d="M${c+r} ${c} A${r} ${r} 0 0 1 ${c-r} ${c}"
+      fill="none" stroke="#fff" stroke-width="${2.8*sc}" stroke-linecap="round"/>
+    <!-- arrowhead pointing left-up at end of bottom arc -->
+    <polygon points="${c-r+1*sc},${c+5*sc} ${c-r-5*sc},${c-1*sc} ${c-r+5*sc},${c-1*sc}"
+      fill="#fff"/>
+  `, bg, s);
+}
+
+// ND — two horizontal parallel bars (= sign)
+function svgND(bg='#000', s=40) {
+  const c = s/2, sc = s/40;
+  const w = 16*sc, h = 3.5*sc, rx = 1.5*sc;
+  return mkSvg(`
+    <rect x="${c-w/2}" y="${c-5.5*sc}" width="${w}" height="${h}" rx="${rx}" fill="#fff"/>
+    <rect x="${c-w/2}" y="${c+2*sc}"   width="${w}" height="${h}" rx="${rx}" fill="#fff"/>
+  `, bg, s);
+}
+
+// CC0 zero — circle with diagonal slash
+function svgZero(bg='#000', s=40) {
+  const c = s/2, sc = s/40, rx = 8*sc, ry = 11*sc;
+  return mkSvg(`
+    <ellipse cx="${c}" cy="${c}" rx="${rx}" ry="${ry}"
+      fill="none" stroke="#fff" stroke-width="${2.8*sc}"/>
+    <line x1="${c-rx*0.7}" y1="${c-ry*0.7}" x2="${c+rx*0.7}" y2="${c+ry*0.7}"
+      stroke="${bg}" stroke-width="${5*sc}" stroke-linecap="round"/>
+    <line x1="${c-rx*0.7}" y1="${c-ry*0.7}" x2="${c+rx*0.7}" y2="${c+ry*0.7}"
+      stroke="#fff" stroke-width="${2*sc}" stroke-linecap="round"/>
+  `, bg, s);
+}
+
+// Copyright circle-C
+function svgCopyright(bg='#555', s=40) {
+  const c = s/2, sc = s/40;
+  return mkSvg(`
+    <text x="${c}" y="${c+6.5*sc}" text-anchor="middle"
+      font-family="Georgia,serif" font-weight="bold"
+      font-size="${18*sc}" fill="#fff">©</text>
+  `, bg, s);
+}
+
+// ── Icon combos per licence ──────────────────────────────
+const ICONS = {
+  'cc0': (s=40) => svgCC('#7c3aed',s) + svgZero('#7c3aed',s),
+  'by':  (s=40) => svgCC('#000',s) + svgBY('#000',s),
+  'by-sa':  (s=40) => svgCC('#000',s) + svgBY('#000',s) + svgSA('#228833',s),
+  'by-nc':  (s=40) => svgCC('#000',s) + svgBY('#000',s) + svgNC('#cc7700',s),
+  'by-nc-sa':(s=40)=> svgCC('#000',s) + svgBY('#000',s) + svgNC('#cc7700',s) + svgSA('#228833',s),
+  'by-nd':  (s=40) => svgCC('#000',s) + svgBY('#000',s) + svgND('#aa2266',s),
+  'by-nc-nd':(s=40)=> svgCC('#000',s) + svgBY('#000',s) + svgNC('#cc7700',s) + svgND('#aa2266',s),
+  'all-rights':(s=40) => svgCopyright('#444',s),
+};
+
+// ── Licence data ─────────────────────────────────────────
+const LICENCES = [
+  { key:'cc0', code:'CC0 1.0', name:'Public Domain Dedication',
+    color:'#a78bfa',
+    desc:'Waive all copyright and related rights worldwide. Others may use, share, adapt, and build upon your work for any purpose — with no conditions, not even attribution.',
+    pills:[{t:'No conditions',a:true},{t:'Commercial ✓',a:true},{t:'Adapt ✓',a:true},{t:'Any licence',a:true}],
+    url:'https://creativecommons.org/publicdomain/zero/1.0/' },
+  { key:'by', code:'CC BY 4.0', name:'Attribution',
+    color:'#5b9cf6',
+    desc:'The most open CC licence. Others may freely distribute, remix, adapt, and build upon your work — even commercially — as long as they credit you.',
+    pills:[{t:'Attribution',n:true},{t:'Commercial ✓',a:true},{t:'Adapt ✓',a:true},{t:'Any licence',a:true}],
+    url:'https://creativecommons.org/licenses/by/4.0/' },
+  { key:'by-sa', code:'CC BY-SA 4.0', name:'Attribution-ShareAlike',
+    color:'#4caf7d',
+    desc:'Others may adapt and share your work even commercially, but must release their adaptations under the same or a compatible licence — the copyleft condition.',
+    pills:[{t:'Attribution',n:true},{t:'Commercial ✓',a:true},{t:'Adapt ✓',a:true},{t:'Same licence',n:true}],
+    url:'https://creativecommons.org/licenses/by-sa/4.0/' },
+  { key:'by-nc', code:'CC BY-NC 4.0', name:'Attribution-NonCommercial',
+    color:'#f5c842',
+    desc:'Others may adapt and redistribute your work for non-commercial purposes only, with attribution. Adaptations may carry any licence, provided the use is non-commercial.',
+    pills:[{t:'Attribution',n:true},{t:'Non-commercial only',d:true},{t:'Adapt ✓',a:true},{t:'Any licence',a:true}],
+    url:'https://creativecommons.org/licenses/by-nc/4.0/' },
+  { key:'by-nc-sa', code:'CC BY-NC-SA 4.0', name:'Attribution-NonCommercial-ShareAlike',
+    color:'#f5894a',
+    desc:'Non-commercial use only, with attribution, and adaptations must carry the same licence. Combines the NC and SA restrictions.',
+    pills:[{t:'Attribution',n:true},{t:'Non-commercial only',d:true},{t:'Adapt ✓',a:true},{t:'Same licence',n:true}],
+    url:'https://creativecommons.org/licenses/by-nc-sa/4.0/' },
+  { key:'by-nd', code:'CC BY-ND 4.0', name:'Attribution-NoDerivatives',
+    color:'#e06fa0',
+    desc:'Others may share your work — even commercially — but must not alter or build upon it publicly. Attribution required; personal-use adaptations are permitted.',
+    pills:[{t:'Attribution',n:true},{t:'Commercial ✓',a:true},{t:'No public derivatives',d:true}],
+    url:'https://creativecommons.org/licenses/by-nd/4.0/' },
+  { key:'by-nc-nd', code:'CC BY-NC-ND 4.0', name:'Attribution-NonCommercial-NoDerivatives',
+    color:'#c0504a',
+    desc:'The most restrictive CC licence. Others may download and share your work as-is with proper credit — no commercial use, no public adaptations.',
+    pills:[{t:'Attribution',n:true},{t:'Non-commercial only',d:true},{t:'No public derivatives',d:true},{t:'Most restrictive',d:true}],
+    url:'https://creativecommons.org/licenses/by-nc-nd/4.0/' },
+  { key:'all-rights', code:'All Rights Reserved', name:'Standard Copyright',
+    color:'#888',
+    desc:'No licence granted. Others may not use, copy, distribute, or adapt your work without explicit permission. This is the default for all creative works.',
+    pills:[{t:'No sharing',d:true},{t:'No commercial',d:true},{t:'No adaptations',d:true}],
+    url:null },
+];
+
+function findLic(key) { return LICENCES.find(l=>l.key===key); }
+
+function pillHtml(pills) {
+  return pills.map(p=>`<span class="pill ${p.a?'allow':p.d?'deny':'note'}">${p.a?'✓':p.d?'✗':'●'} ${p.t}</span>`).join('');
+}
+
+// ── FLOW STATE ───────────────────────────────────────────
+let S = {};
+
+function ans(q, v) {
+  S['q'+q] = v;
+  // hide subsequent steps
+  for (let i=q+1; i<=2; i++) {
+    document.getElementById('step'+i).classList.remove('show');
+    document.getElementById('arr'+(i-1)).classList.remove('show');
+  }
+  document.getElementById('arr2').classList.remove('show');
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('result').innerHTML = '';
+  document.getElementById('also-options').style.display = 'none';
+
+  if (q===0) {
+    document.getElementById('arr0').classList.add('show');
+    document.getElementById('step1').classList.add('show');
+  } else if (q===1) {
+    if (v==='no') {
+      // ND result — skip SA question
+      document.getElementById('arr2').classList.add('show');
+      const key = S.q0==='yes' ? 'by-nd' : 'by-nc-nd';
+      showResult(key);
+    } else {
+      document.getElementById('arr1').classList.add('show');
+      document.getElementById('step2').classList.add('show');
+    }
+  } else if (q===2) {
+    document.getElementById('arr2').classList.add('show');
+    let key;
+    if (S.q0==='yes') key = v==='yes' ? 'by-sa' : 'by';
+    else               key = v==='yes' ? 'by-nc-sa' : 'by-nc';
+    showResult(key);
+  }
+}
+
+function showResult(key) {
+  const lic = findLic(key);
+  const iconHtml = ICONS[key] ? ICONS[key](48) : '';
+  const res = document.getElementById('result');
+  res.innerHTML = `
+    <div class="result-card" style="border-color:${lic.color}30">
+      <div class="result-card-top" style="background:${lic.color}0d">
+        <div class="result-badge-row">${iconHtml}</div>
+        <div class="result-code" style="color:${lic.color}">${lic.code}</div>
+        <div class="result-name">${lic.name}</div>
+        <div class="result-desc">${lic.desc}</div>
+        ${lic.url?`<a href="${lic.url}" target="_blank" class="lic-link" style="color:${lic.color};border-color:${lic.color}40">View full licence →</a>`:''}
+      </div>
+      <div class="result-card-bottom">${pillHtml(lic.pills)}</div>
+    </div>
+    <button class="restart-btn" onclick="restart()">↩ &nbsp;Start over</button>
+  `;
+  setTimeout(()=>res.classList.add('show'),20);
+  document.getElementById('also-options').style.display = 'block';
+}
+
+function restart() {
+  S = {};
+  ['step1','step2'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  ['arr0','arr1','arr2'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  const res = document.getElementById('result');
+  res.classList.remove('show'); res.innerHTML='';
+  document.getElementById('also-options').style.display='none';
+  // reset step0 flicker
+  const s0 = document.getElementById('step0');
+  s0.classList.remove('show');
+  setTimeout(()=>s0.classList.add('show'),20);
+}
+
+// ── ELEMENTS TAB ─────────────────────────────────────────
+const ELEMENTS = [
+  { abbr:'BY', title:'Attribution', color:'#5b9cf6', svgFn: ()=>svgBY('#5b9cf6',48),
+    text:'Required by all CC licences. Credit the creator\'s name, work title, source URL, and licence in the manner they specify. This is the universal baseline.' },
+  { abbr:'NC', title:'NonCommercial', color:'#f5c842', svgFn: ()=>svgNC('#cc7700',48),
+    text:'Use is restricted to non-commercial purposes — not primarily aimed at commercial advantage or monetary compensation. The user\'s intent matters, not just their status.' },
+  { abbr:'SA', title:'ShareAlike', color:'#4caf7d', svgFn: ()=>svgSA('#228833',48),
+    text:'Adaptations shared publicly must carry the same or a compatible licence. The copyleft/viral condition — it keeps the creative commons growing. Incompatible with ND.' },
+  { abbr:'ND', title:'NoDerivatives', color:'#e06fa0', svgFn: ()=>svgND('#aa2266',48),
+    text:'You may not distribute adapted versions of the work. Personal adaptations for private use are fine — just don\'t share them publicly. Incompatible with SA.' },
+];
+
+document.getElementById('elem-grid').innerHTML = ELEMENTS.map(e=>`
+  <div class="elem-card">
+    <div class="elem-icon-row">
+      ${e.svgFn()}
+      <div class="elem-abbr" style="color:${e.color}">${e.abbr}</div>
+    </div>
+    <div class="elem-title">${e.title}</div>
+    <div class="elem-text">${e.text}</div>
+  </div>`).join('');
+
+const specColors = ['#7c3aed','#5b9cf6','#4caf7d','#f5c842','#f5894a','#e06fa0','#c0504a'];
+const specKeys   = ['CC0','CC BY','CC BY-SA','CC BY-NC','CC BY-NC-SA','CC BY-ND','CC BY-NC-ND'];
+document.getElementById('spec-chips').innerHTML = specKeys.map((k,i)=>`
+  <div class="spec-lic-chip">
+    <span class="dot" style="background:${specColors[i]}"></span>${k}
+  </div>`).join('');
+
+// ── ALL LICENCES TAB ─────────────────────────────────────
+document.getElementById('all-grid').innerHTML = LICENCES.filter(l=>l.key!=='all-rights').map(lic=>`
+  <div class="lic-card">
+    <div class="lic-badge-row">${ICONS[lic.key](36)}</div>
+    <div class="lic-code" style="color:${lic.color}">${lic.code}</div>
+    <div class="lic-name">${lic.name}</div>
+    <div class="lic-desc">${lic.desc}</div>
+    <div class="lic-pills">${pillHtml(lic.pills)}</div>
+    ${lic.url?`<a href="${lic.url}" target="_blank" class="lic-link">View licence deed →</a>`:''}
+  </div>`).join('');
+
+// ── COMPAT TABLE ─────────────────────────────────────────
+const COMPAT = [
+  { key:'cc0',       share:1, com:1, adapt:1, shareAdapt:1, same:0 },
+  { key:'by',        share:1, com:1, adapt:1, shareAdapt:1, same:0 },
+  { key:'by-sa',     share:1, com:1, adapt:1, shareAdapt:1, same:1 },
+  { key:'by-nc',     share:1, com:0, adapt:1, shareAdapt:1, same:0 },
+  { key:'by-nc-sa',  share:1, com:0, adapt:1, shareAdapt:1, same:1 },
+  { key:'by-nd',     share:1, com:1, adapt:2, shareAdapt:0, same:0 },
+  { key:'by-nc-nd',  share:1, com:0, adapt:2, shareAdapt:0, same:0 },
+];
+const ck='<span class="ck">✓</span>', cx='<span class="cx">✗</span>';
+document.getElementById('compat-body').innerHTML = COMPAT.map(row=>{
+  const lic = findLic(row.key);
+  return `<tr>
+    <td><div class="tbl-lic-cell">
+      <div style="display:flex;gap:3px;align-items:center;">${ICONS[row.key](24)}</div>
+      <span class="tbl-lic-code" style="color:${lic.color}">${lic.code}</span>
+    </div></td>
+    <td>${ck}</td>
+    <td>${row.com?ck:cx}</td>
+    <td>${row.adapt===2?'<span class="cm">personal</span>':row.adapt?ck:cx}</td>
+    <td>${row.shareAdapt?ck:cx}</td>
+    <td>${row.same?ck:cx}</td>
+  </tr>`;}).join('');
+
+// ── NAV ──────────────────────────────────────────────────
+function show(id, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+</script>
+</body>
+</html>
